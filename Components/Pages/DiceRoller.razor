@@ -1,0 +1,161 @@
+@page "/dice"
+@inject IDiceGameService GameService
+
+<PageTitle>Dice Roller</PageTitle>
+
+<div class="dice-roller-container">
+    <h1>🎲 Dice Roller</h1>
+    
+    <div class="dice-selector">
+        <h3>Select Dice Type</h3>
+        <div class="dice-options">
+            @foreach (var sides in CommonDiceSides)
+            {
+                <button class="dice-button @(selectedSides == sides ? "selected" : "")" 
+                        @onclick="() => SelectDice(sides)">
+                    d@sides
+                </button>
+            }
+        </div>
+        
+        <div class="custom-dice">
+            <label for="customSides">Custom (1-100):</label>
+            <input type="number" 
+                   id="customSides" 
+                   min="@GameService.MinSides" 
+                   max="@GameService.MaxSides" 
+                   @bind="selectedSides" 
+                   @bind:event="oninput" />
+        </div>
+    </div>
+
+    <div class="roll-section">
+        <button class="roll-button" @onclick="RollDice" disabled="@isRolling">
+            @if (isRolling)
+            {
+                <span>🎲 Rolling...</span>
+            }
+            else
+            {
+                <span>🎲 Roll d@selectedSides</span>
+            }
+        </button>
+    </div>
+
+    @if (lastRoll != null)
+    {
+        <div class="result-display @resultAnimationClass">
+            <div class="result-value">@lastRoll.Result</div>
+            <div class="result-info">Rolled d@lastRoll.Sides</div>
+        </div>
+    }
+
+    <div class="history-section">
+        <div class="history-header">
+            <h3>Roll History (@totalRolls rolls)</h3>
+            @if (totalRolls > 0)
+            {
+                <button class="clear-button" @onclick="ClearHistory">Clear History</button>
+            }
+        </div>
+        
+        @if (rollHistory.Any())
+        {
+            <div class="history-list">
+                @foreach (var roll in rollHistory)
+                {
+                    <div class="history-item">
+                        <span class="history-dice">d@roll.Sides</span>
+                        <span class="history-result">@roll.Result</span>
+                        <span class="history-time">@FormatTime(roll.Timestamp)</span>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="no-history">No rolls yet. Start rolling!</p>
+        }
+    </div>
+</div>
+
+@code {
+    private int selectedSides = 6;
+    private DiceRoll? lastRoll;
+    private List<DiceRoll> rollHistory = new();
+    private int totalRolls = 0;
+    private bool isRolling = false;
+    private string resultAnimationClass = "";
+
+    private int[] CommonDiceSides = { 4, 6, 8, 10, 12, 20, 100 };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadHistory();
+    }
+
+    private void SelectDice(int sides)
+    {
+        selectedSides = sides;
+    }
+
+    private async Task RollDice()
+    {
+        if (isRolling) return;
+
+        isRolling = true;
+        resultAnimationClass = "";
+        StateHasChanged();
+
+        // Small delay for UX
+        await Task.Delay(300);
+
+        lastRoll = await GameService.RollAndSaveAsync(selectedSides);
+        resultAnimationClass = "animate-result";
+        
+        await LoadHistory();
+        
+        isRolling = false;
+        StateHasChanged();
+    }
+
+    private async Task LoadHistory()
+    {
+        rollHistory = await GameService.GetRecentRollsAsync(10);
+        totalRolls = await GameService.GetTotalRollsAsync();
+        StateHasChanged();
+    }
+
+    private async Task ClearHistory()
+    {
+        var mainWindow = global::DiceRoller.App.App.Current?.Windows?.FirstOrDefault();
+        if (mainWindow?.Page == null) return;
+
+        var confirmed = await mainWindow.Page.DisplayAlert(
+            "Clear History", 
+            "Are you sure you want to clear all roll history?", 
+            "Yes", 
+            "No");
+        
+        if (confirmed)
+        {
+            await GameService.ClearHistoryAsync();
+            lastRoll = null;
+            await LoadHistory();
+        }
+    }
+
+    private string FormatTime(DateTime timestamp)
+    {
+        var timeSpan = DateTime.UtcNow - timestamp;
+        
+        if (timeSpan.TotalMinutes < 1)
+            return "Just now";
+        if (timeSpan.TotalMinutes < 60)
+            return $"{(int)timeSpan.TotalMinutes}m ago";
+        if (timeSpan.TotalHours < 24)
+            return $"{(int)timeSpan.TotalHours}h ago";
+        
+        return timestamp.ToLocalTime().ToString("MMM dd, HH:mm");
+    }
+}
