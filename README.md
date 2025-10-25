@@ -124,26 +124,33 @@ dotnet build -t:Run -f net9.0-windows10.0.19041.0
 
 ## 🧪 Testing
 
-The project includes unit tests for core functionality:
+The project is designed with testability in mind:
 
-- `DiceRollerServiceTests`: Tests for dice rolling logic
-  - Valid roll ranges
-  - Common dice types
-  - Edge cases (min/max sides)
-  - Invalid input handling
-  - Randomness validation
+### Service Layer Testing
+The business logic in `Services/` can be tested independently:
+- `DiceRollerService`: Dice rolling logic with validation
+- `DiceGameService`: Game operations with persistence
 
-- `DiceRollerDbContextTests`: Tests for database operations
-  - Save rolls
-  - Retrieve history
-  - Clear history
-  - Roll counting
+### Data Layer Testing
+The data layer in `Data/` can be tested with a separate test project:
+- `DiceRollerDbContext`: Database operations
 
-### Running Tests
+### Recommended Testing Approach
+For comprehensive testing, create a separate .NET test project:
 
 ```bash
-dotnet test
+# Create a test project
+dotnet new xunit -n DiceRoller.Tests
+
+# Add reference to the service and data classes
+# Test the business logic and data layer independently
 ```
+
+### Manual Testing
+- Cross-platform UI/UX testing
+- Performance on real devices
+- Database persistence verification
+- Platform-specific features
 
 ## 📦 Dependencies
 
