@@ -1,0 +1,246 @@
+.dice-roller-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dice-roller-container h1 {
+    text-align: center;
+    color: #512bd4;
+    margin-bottom: 30px;
+}
+
+.dice-selector {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.dice-selector h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.dice-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.dice-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 2px solid #512bd4;
+    background: white;
+    color: #512bd4;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.dice-button:hover {
+    background: #512bd4;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.dice-button.selected {
+    background: #512bd4;
+    color: white;
+}
+
+.custom-dice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.custom-dice label {
+    font-weight: 500;
+}
+
+.custom-dice input {
+    padding: 8px;
+    font-size: 16px;
+    border: 2px solid #512bd4;
+    border-radius: 5px;
+    width: 100px;
+}
+
+.roll-section {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.roll-button {
+    padding: 20px 40px;
+    font-size: 24px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(81, 43, 212, 0.4);
+}
+
+.roll-button:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(81, 43, 212, 0.6);
+}
+
+.roll-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.result-display {
+    text-align: center;
+    margin: 30px 0;
+    padding: 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    color: white;
+}
+
+.result-value {
+    font-size: 72px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.result-info {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.animate-result {
+    animation: resultPop 0.5s ease-out;
+}
+
+@keyframes resultPop {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.history-section {
+    margin-top: 40px;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.history-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.clear-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.clear-button:hover {
+    background: #c82333;
+}
+
+.history-list {
+    background: #f5f5f5;
+    border-radius: 10px;
+    padding: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.history-item:last-child {
+    margin-bottom: 0;
+}
+
+.history-dice {
+    font-weight: bold;
+    color: #512bd4;
+    min-width: 50px;
+}
+
+.history-result {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    flex: 1;
+    text-align: center;
+}
+
+.history-time {
+    font-size: 12px;
+    color: #666;
+    min-width: 80px;
+    text-align: right;
+}
+
+.no-history {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+    font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .dice-roller-container {
+        padding: 10px;
+    }
+
+    .dice-options {
+        justify-content: center;
+    }
+
+    .result-value {
+        font-size: 56px;
+    }
+
+    .roll-button {
+        padding: 15px 30px;
+        font-size: 20px;
+    }
+
+    .history-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+}
